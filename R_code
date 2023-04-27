@@ -1,0 +1,19 @@
+#list oxygen files inside ChannelDatafolders
+temp = list.files(recursive = TRUE,full.names=TRUE,pattern="_Oxygen.txt") 
+length(temp)
+View(temp)
+
+#read listed files add dirname and basename as 2 seperate column
+myDB <- do.call(rbind, lapply(temp, function(x) {
+  dat<- read.table( x, header = T, sep = "\t")
+  dat
+  dat$dirname <- tools::file_path_sans_ext(dirname(x))
+  dat$basename <- tools::file_path_sans_ext(basename(x))
+  colnames(dat) <- c("Date","Time","dt (s)","Oxygen (?mol/L)","dphi",
+                     "Signal Intensity (mV)","Ambient Light (mV)","Status",
+                     "Date CompT","Time CompT","dt (s) CompT","Sample Temperature (?C)",
+                     "Status CompT","Date CompP","Time CompP","dt (s) CompP",
+                     "Pressure (mbar)","Status CompP","dirname","basename")
+  dat
+  return(dat)
+}))
